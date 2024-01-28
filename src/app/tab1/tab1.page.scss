@@ -1,0 +1,37 @@
+.compteur {
+    display: flex;
+    color: blue;
+    justify-content: center;
+    font-weight: bold;
+
+    .card-content-md, .card-content-ios {
+        font-size: 30px;
+
+    }
+}
+#compass {
+    border-radius: 50%;
+    max-width: 200px;
+    height: auto;
+    margin-left: 15px;
+}
+
+.orientation {
+    display: flex;
+    // justify-content: space-between;
+    align-items: center;
+    padding-right: 0%;
+    width: 100%;
+    .degree {
+        font-size: 35px;
+
+    }
+}
+
+.info-compass{
+    margin-left: 20px;
+}
+
+.alt {
+    text-align: center;
+}
