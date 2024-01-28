@@ -21,7 +21,8 @@
   <ion-toolbar>
     <!-- Start/Stop -->
     <ion-buttons slot="start">
-      <ion-button>Start</ion-button>
+      <ion-button *ngIf="!isrunnig" (click)="running()">Start</ion-button>
+      <ion-button *ngIf="isrunnig" (click)="stop()">Stop</ion-button>
     </ion-buttons>
     <!-- Restart -->
     <ion-buttons slot="end">

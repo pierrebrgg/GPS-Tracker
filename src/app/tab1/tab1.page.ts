@@ -10,9 +10,17 @@ export class Tab1Page {
   constructor() {}
 
   public compt = 0;
+  public isrunnig = false;
 
 
   public increment() {
   }
+  public running() {
+    this.isrunnig=true
+  }
+  public stop() {
+    this.isrunnig=false
+  }
+
 
 }
