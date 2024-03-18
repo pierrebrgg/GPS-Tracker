@@ -9,17 +9,46 @@ export class Tab1Page {
 
   constructor() {}
 
-  public compt = 0;
-  public isrunnig = false;
+  public minutes: number = 0;
+  public seconds: number = 0;
+  public milliseconds: number = 0;
+  public interval: any;
+  public isRunning: boolean = false;
 
+  public toogleTimer() {
+    if(!this.isRunning) {
+      this.isRunning = !this.isRunning
+      this.startTimer();
+    } else {
+      this.isRunning = !this.isRunning
+      this.stopTimer();
+    }
+  }
 
-  public increment() {
+  private startTimer(): void {
+    this.interval = setInterval(() => {
+      this.milliseconds += 10;
+      if (this.milliseconds == 1000) {
+        this.milliseconds = 0;
+        this.seconds++;
+      }
+      if (this.seconds == 60) {
+        this.seconds = 0;
+        this.minutes++;
+      }
+    }, 10);
   }
-  public running() {
-    this.isrunnig=true
+
+  private stopTimer(): void {
+    clearInterval(this.interval);
   }
-  public stop() {
-    this.isrunnig=false
+
+// reinistialise le timer
+public  resetTimer() {
+    this.stopTimer();
+    this.milliseconds = 0;
+    this.seconds = 0;
+    this.minutes = 0;
   }
 
 

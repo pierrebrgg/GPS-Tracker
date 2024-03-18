@@ -2,7 +2,7 @@
 <!-- Compteur ponctuel -->
   <ion-card class="compteur">
       <ion-card-content>3600 m</ion-card-content>
-      <ion-card-content>00:01:35</ion-card-content>
+      <ion-card-content>{{ minutes }} : {{ seconds }} : {{ milliseconds }}</ion-card-content>
   </ion-card>
  <!-- Compteurgénérl -->
   <ion-card class="compteur">
@@ -21,12 +21,11 @@
   <ion-toolbar>
     <!-- Start/Stop -->
     <ion-buttons slot="start">
-      <ion-button *ngIf="!isrunnig" (click)="running()">Start</ion-button>
-      <ion-button *ngIf="isrunnig" (click)="stop()">Stop</ion-button>
+      <ion-button (click)="toogleTimer()" [innerHtml]="isRunning ? 'Stop':  'Start'"></ion-button>
     </ion-buttons>
     <!-- Restart -->
     <ion-buttons slot="end">
-      <ion-button>Reset</ion-button>
+      <ion-button (click)="resetTimer()">Reset</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-content>
