@@ -1,4 +1,10 @@
 import { Component } from '@angular/core';
+import { Geolocation } from '@capacitor/geolocation';
+import { PluginListenerHandle } from '@capacitor/core';
+import { Motion } from '@capacitor/motion';
+import { Vehicule } from '../models/vehicule';
+import { User } from '../models/person';
+
 
 @Component({
   selector: 'app-tab1',
@@ -6,6 +12,14 @@ import { Component } from '@angular/core';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
+
+  public monVehicule:Vehicule =new Vehicule();
+
+  public pierre:User =new User();
+
+  public coordinates:any;
+
+  public accelHandler!: PluginListenerHandle;
 
   constructor() {}
 
@@ -52,4 +66,23 @@ public  resetTimer() {
   }
 
 
+public async printCurrentPosition() {
+  this.coordinates = await Geolocation.getCurrentPosition();
+  console.log('Current position:', this.coordinates);
+}
+// compass data
+public async data() {
+  this.accelHandler = await Motion.addListener('accel', event => {
+    console.log('Device motion event:', event);
+  });
+}
+public test1(message:string){
+ this.monVehicule.anneeConstruit=2001;
+this.pierre.Nom="Bourguigneau"
+this.pierre.sex="enorme"
+this.monVehicule.carburant="mazout"
+this.monVehicule.moteur="W16"
+this.pierre.vehicule=this.monVehicule;
+  console.log(this.pierre)
+}
 }
