@@ -4,6 +4,7 @@ import { PluginListenerHandle } from '@capacitor/core';
 import { Motion } from '@capacitor/motion';
 import { Vehicule } from '../models/vehicule';
 import { User } from '../models/person';
+import { NgLocalization } from '@angular/common';
 
 
 @Component({
@@ -17,11 +18,11 @@ export class Tab1Page {
 
   public pierre:User =new User();
 
-  public coordinates:any;
+  public coordinatesStart:any;
 
   public accelHandler!: PluginListenerHandle;
 
-  constructor() {}
+  constructor(private geolocation: Geolocation) { }
 
   public minutes: number = 0;
   public seconds: number = 0;
@@ -67,9 +68,17 @@ public  resetTimer() {
 
 
 public async printCurrentPosition() {
-  this.coordinates = await Geolocation.getCurrentPosition();
-  console.log('Current position:', this.coordinates);
+  this.coordinatesStart = await Geolocation.getCurrentPosition();
+  console.log('Current position:', this.coordinatesStart.coords.latitude);
+  this.calculateDistance(this.coordinatesStart.coords.latitude,this.coordinatesStart.coords.longitude,43.48333,-1.48333)
+  let watch = navigator.geolocation.watchPosition(this.successCallback)
+
 }
+
+public successCallback(position:any) {
+  console.log('watch', position);
+}
+
 // compass data
 public async data() {
   this.accelHandler = await Motion.addListener('accel', event => {
@@ -85,4 +94,20 @@ this.monVehicule.moteur="W16"
 this.pierre.vehicule=this.monVehicule;
   console.log(this.pierre)
 }
+private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371e3; // Rayon de la Terre en mètres
+  const phi1 = lat1 * Math.PI / 180; // φ, λ en radians
+  const phi2 = lat2 * Math.PI / 180;
+  const deltaPhi = (lat2-lat1) * Math.PI / 180;
+  const deltaLambda = (lon2-lon1) * Math.PI / 180;
+
+  const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+            Math.cos(phi1) * Math.cos(phi2) *
+            Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  const distance = R * c; // en mètres
+  console.log(distance);
+}
+
 }

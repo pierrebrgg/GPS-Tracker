@@ -5,14 +5,14 @@
       <ion-card-content (click)="resetTimer()">{{ minutes }} : {{ seconds }} : {{ milliseconds }}</ion-card-content>
   </ion-card>
  <!-- Compteurgénérl -->
-  <ion-card class="compteur" *ngIf="coordinates">
-      <ion-card-content>{{coordinates.coords.latitude}}</ion-card-content>
+  <ion-card class="compteur" *ngIf="coordinatesStart">
+      <ion-card-content>{{coordinatesStart.coords.latitude}}</ion-card-content>
       <ion-card-content>00:02:15</ion-card-content>
   </ion-card>
 <!-- Boussole -->
 
   <ion-card class="orientation">
-    <img (click)="test1('test 2')" id="compass" alt="Silhouette of mountains" src="../../assets/images/compass-digital.jpg" />
+    <img id="compass" alt="Silhouette of mountains" src="../../assets/images/compass-digital.jpg" />
   <ion-card-header class="info-compass">
     <ion-card-subtitle class="alt">247 m</ion-card-subtitle>
     <ion-card-title class="degree"> 45° NE</ion-card-title>
@@ -22,7 +22,7 @@
   <ion-toolbar>
     <!-- Start/Stop -->
     <ion-buttons slot="start">
-      <ion-button (click)="toogleTimer()" [innerHtml]="isRunning ? 'Stop':  'Start'"></ion-button>
+      <ion-button (click)="toogleTimer();printCurrentPosition()" [innerHtml]="isRunning ? 'Stop':  'Start'"></ion-button>
     </ion-buttons>
     <!-- Restart -->
     <ion-buttons slot="end">
