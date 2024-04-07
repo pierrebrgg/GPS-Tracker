@@ -1,28 +1,44 @@
 <ion-content [fullscreen]="true">
 <!-- Compteur ponctuel -->
   <ion-card class="compteur">
-      <ion-card-content (click)="toogleTimer()">3600 m</ion-card-content>
+      <ion-card-content (click)="toogleTimer()">{{distance | number:'1.2-2'}}</ion-card-content>
       <ion-card-content (click)="resetTimer()">{{ minutes }} : {{ seconds }} : {{ milliseconds }}</ion-card-content>
   </ion-card>
  <!-- Compteurgénérl -->
-  <ion-card class="compteur" *ngIf="coordinatesStart">
+  <!-- <ion-card class="compteur" *ngIf="coordinatesStart">
       <ion-card-content>{{coordinatesStart.coords.latitude}}</ion-card-content>
       <ion-card-content>00:02:15</ion-card-content>
-  </ion-card>
+  </ion-card> -->
 <!-- Boussole -->
 
-  <ion-card class="orientation">
+  <!-- <ion-card class="orientation">
     <img id="compass" alt="Silhouette of mountains" src="../../assets/images/compass-digital.jpg" />
   <ion-card-header class="info-compass">
     <ion-card-subtitle class="alt">247 m</ion-card-subtitle>
     <ion-card-title class="degree"> 45° NE</ion-card-title>
   </ion-card-header>
+  </ion-card> -->
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Liste des positions</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list *ngIf="successivePositions.length > 0">
+        <ion-item *ngFor="let pos of successivePositions;">
+          <ion-label>{{pos}}</ion-label>
+        </ion-item>
+  
+        
+      </ion-list>
+    </ion-card-content>
   </ion-card>
+
   <!-- Buttons -->
   <ion-toolbar>
     <!-- Start/Stop -->
     <ion-buttons slot="start">
-      <ion-button (click)="toogleTimer();printCurrentPosition()" [innerHtml]="isRunning ? 'Stop':  'Start'"></ion-button>
+      <ion-button (click)="toogleTimer(); printCurrentPosition()" [innerHtml]="isRunning ? 'Stop':  'Start'"></ion-button>
     </ion-buttons>
     <!-- Restart -->
     <ion-buttons slot="end">
