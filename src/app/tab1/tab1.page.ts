@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { PluginListenerHandle } from '@capacitor/core';
 import { Motion } from '@capacitor/motion';
 import { Vehicule } from '../models/vehicule';
 import { User } from '../models/person';
-import { NgLocalization } from '@angular/common';
+import { Observable, Subject, takeUntil, timer } from 'rxjs';
 
 
 @Component({
@@ -12,11 +12,17 @@ import { NgLocalization } from '@angular/common';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page {
+export class Tab1Page implements OnInit {
 
   public monVehicule:Vehicule =new Vehicule();
 
   public pierre:User =new User();
+
+  public successivePositions: string[] = []
+  public frequenceCurrentPosition$: Subject<boolean> = new Subject()
+  public distanceSuccessive: number[] = [];
+
+  public distance: number = 0;
 
   public coordinatesStart:any;
 
@@ -30,11 +36,20 @@ export class Tab1Page {
   public interval: any;
   public isRunning: boolean = false;
 
+  public async ngOnInit(): Promise<void> {
+    this.coordinatesStart = await Geolocation.getCurrentPosition();
+  }
+
   public toogleTimer() {
     if(!this.isRunning) {
       this.isRunning = !this.isRunning
+      this.frequenceCurrentPosition$ = new Subject();
       this.startTimer();
+
     } else {
+      this.frequenceCurrentPosition$.next(true);
+      this.frequenceCurrentPosition$.complete();
+      this.frequenceCurrentPosition$.unsubscribe()
       this.isRunning = !this.isRunning
       this.stopTimer();
     }
@@ -64,24 +79,27 @@ public  resetTimer() {
     this.milliseconds = 0;
     this.seconds = 0;
     this.minutes = 0;
+    this.successivePositions = [];
+    this.distanceSuccessive = []
   }
 
 
-public async printCurrentPosition() {
-  this.coordinatesStart = await Geolocation.getCurrentPosition();
-  console.log('Current position:', this.coordinatesStart.coords.latitude);
-  this.calculateDistance(this.coordinatesStart.coords.latitude,this.coordinatesStart.coords.longitude,43.48333,-1.48333)
-  let watch = navigator.geolocation.watchPosition(this.successCallback)
-
-}
-
-public successCallback(position:any) {
-  console.log('watch', position);
+public printCurrentPosition() {
+  // interval de temps en milliseconde ici 3000 = 3s
+  timer(0, 3000).pipe(takeUntil(this.frequenceCurrentPosition$)).subscribe(async () => {
+    let currentPosition = await Geolocation.getCurrentPosition();
+      console.log(currentPosition.coords)
+      this.distanceSuccessive.unshift(this.calculateDistance(this.coordinatesStart.coords.latitude,this.coordinatesStart.coords.longitude,
+        currentPosition.coords.latitude,currentPosition.coords.longitude));
+      this.distance = this.calculateDistance(this.coordinatesStart.coords.latitude,this.coordinatesStart.coords.longitude,
+          currentPosition.coords.latitude,currentPosition.coords.longitude);
+      this.successivePositions.unshift(`${currentPosition.coords.latitude} - ${currentPosition.coords.longitude}`);
+  });
 }
 
 // compass data
 public async data() {
-  this.accelHandler = await Motion.addListener('accel', event => {
+  this.accelHandler = await Motion.addListener('accel', (event:any) => {
     console.log('Device motion event:', event);
   });
 }
@@ -94,7 +112,7 @@ this.monVehicule.moteur="W16"
 this.pierre.vehicule=this.monVehicule;
   console.log(this.pierre)
 }
-private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371e3; // Rayon de la Terre en mètres
   const phi1 = lat1 * Math.PI / 180; // φ, λ en radians
   const phi2 = lat2 * Math.PI / 180;
@@ -107,7 +125,7 @@ private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
   const distance = R * c; // en mètres
-  console.log(distance);
+  return distance;
 }
 
 }
